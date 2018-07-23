@@ -1,0 +1,38 @@
+#!/usr/bin/expect -f
+
+set HOST [lindex $argv 0]
+set PORT [lindex $argv 1]
+set PASSWORD [lindex $argv 2]
+set COMMAND [lindex $argv 3]
+set timeout 10
+
+spawn -noecho telnet $HOST $PORT
+match_max 10000000
+log_user 0
+
+if { $PASSWORD != "-" } {
+expect -exact "\r\r
+Entering character mode\r\r
+Escape character is '^\]'.\r\r
+\r
+Password: "
+send -- "$PASSWORD\r"
+expect -exact "\r
+Entering line mode\r
+Escape character is '^C'.\r
+\r\r
+\r\r
+"
+}
+
+send -- "$COMMAND\r"
+
+# start interactive session
+if { $COMMAND == "" } {
+  interact
+
+# open permanent channel
+} else {
+  expect "$COMMAND\r"
+  interact
+}

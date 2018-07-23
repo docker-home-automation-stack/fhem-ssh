@@ -1,0 +1,42 @@
+FROM debian:stretch-slim
+LABEL maintainer="Julian Pawlowski <julian.pawlowski@gmail.com>"
+
+ENV TERM xterm
+
+# Install base environment
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -qqy --no-install-recommends apt-utils \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -qqy --no-install-recommends \
+  apt-transport-https \
+  bash \
+  expect \
+  jq \
+  netcat \
+  openssh-server \
+  perl \
+  telnet \
+  telnet-ssl \
+  && apt-get autoremove && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN sed -i s,root,fhem,g /etc/passwd; \
+      sed -i s,^fhem.*,fhem:*:0:0::/root:/bin/ash,g /etc/passwd; \
+      sed -i s,root,fhem,g /etc/group; \
+      sed -i s,root,fhem,g /etc/shadow; \
+      echo "" > /etc/motd;
+
+ADD https://svn.fhem.de/fhem/trunk/fhem/fhem.pl /fhem.pl
+COPY src/connect.sh /connect.sh
+COPY src/fhem-telnet.exp /fhem-telnet.exp
+COPY src/sshd_config /etc/ssh/sshd_config
+COPY src/entry.sh /entry.sh
+RUN chmod 755 /*.sh /*.pl
+
+VOLUME [ "/data" ]
+
+EXPOSE 22
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 CMD nc -z localhost 22
+
+ENTRYPOINT [ "/entry.sh" ]
+CMD [ "start" ]
