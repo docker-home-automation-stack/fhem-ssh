@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Starting FHEM SSH server ..."
 echo -e "  1. Generating SSH server keys\n\n"
