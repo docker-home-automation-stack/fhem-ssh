@@ -20,7 +20,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN sed -i s,root,fhem,g /etc/passwd; \
-      sed -i s,^fhem.*,fhem:*:0:0::/root:/bin/ash,g /etc/passwd; \
+      sed -i s,^fhem.*,fhem:*:0:0::/root:/bin/sh,g /etc/passwd; \
       sed -i s,root,fhem,g /etc/group; \
       sed -i s,root,fhem,g /etc/shadow; \
       echo "" > /etc/motd;
