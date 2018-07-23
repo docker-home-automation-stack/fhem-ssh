@@ -11,6 +11,7 @@ mkdir -p /root/.ssh
 chmod 700 /root/.ssh/
 [ ! -f /data/authorized_keys ] && touch /data/authorized_keys
 chmod 644 /data/authorized_keys
+chmod 600 /data/ssh_host_*
 ln -sf /data/authorized_keys /root/.ssh/
 
 mkdir -p /var/run/sshd
