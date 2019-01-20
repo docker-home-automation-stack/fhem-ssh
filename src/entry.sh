@@ -2,7 +2,7 @@
 
 echo "Starting FHEM SSH server ..."
 echo -e "  1. Generating SSH server keys\n\n"
-if [ ! -s /data/ssh_host_rsa_key ]; then ssh-keygen -f /data/ssh_host_rsa_key -N '' -t rsa; fi
+if [[ ! -f /data/ssh_host_rsa_key || $(ssh-keygen -lf /data/ssh_host_rsa_key | cut -d " " -f 1) -lt 4096 ]]; then ssh-keygen -b 4096 -f /data/ssh_host_rsa_key -N '' -t rsa; fi
 if [ ! -s /data/ssh_host_ecdsa_key ]; then ssh-keygen -f /data/ssh_host_ecdsa_key -N '' -t ecdsa; fi
 if [ ! -s /data/ssh_host_ed25519_key ]; then ssh-keygen -f /data/ssh_host_ed25519_key -N '' -t ed25519; fi
 
